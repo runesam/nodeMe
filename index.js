@@ -1,3 +1,10 @@
 const fs = require('fs');
+const os = require('os');
 
-fs.appendFile('greatings.txt', 'hey mother fuckers', error => console.log(error));
+const user = os.userInfo();
+
+fs.appendFile(
+    'greatings.txt',
+    `hey ${user.username} how are you mother fuckers`,
+    error => console.log(error),
+);
