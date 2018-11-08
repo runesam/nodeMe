@@ -2,12 +2,12 @@ const { argv } = require('yargs');
 
 const commands = require('./notes');
 
-const args = argv;
+const { title, body } = argv;
 
-const command = args._[0];
+const command = argv._[0];
 
 try {
-    commands[command](args.title);
+    console.log('command result ==>', commands[command](title, body));
 } catch (e) {
     console.log(e, 'command not recognized');
 }
