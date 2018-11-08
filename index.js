@@ -1,10 +1,13 @@
-const fs = require('fs');
-const os = require('os');
+const { argv } = require('yargs');
 
-const user = os.userInfo();
+const commands = require('./notes');
 
-fs.appendFile(
-    'greatings.txt',
-    `hey ${user.username} how are you mother fuckers`,
-    error => console.log(error),
-);
+const args = argv;
+
+const command = args._[0];
+
+try {
+    commands[command](args.title);
+} catch (e) {
+    console.log(e, 'command not recognized');
+}
