@@ -3,7 +3,7 @@ const fs = require('fs');
 let notes = {};
 
 try {
-    const notesBlob = fs.readFileSync('notes.json');
+    const notesBlob = fs.readFileSync('./notesApp/notes.json');
     notes = (JSON.parse(notesBlob));
 } catch (e) {
     fs.writeFileSync('notes.json', JSON.stringify(notes));
@@ -15,7 +15,7 @@ function add(title, body) {
         return 'a note with that title already exists';
     }
     notes[title] = body;
-    fs.writeFileSync('notes.json', JSON.stringify(notes));
+    fs.writeFileSync('./notesApp/notes.json', JSON.stringify(notes));
     return ({ title, body: notes[title] });
 }
 
@@ -34,7 +34,7 @@ function remove(title) {
     if (notes[title]) {
         try {
             delete notes[title];
-            fs.writeFileSync('notes.json', JSON.stringify(notes));
+            fs.writeFileSync('./notesApp/notes.json', JSON.stringify(notes));
             return ({ title, body: notes[title] });
         } catch (e) {
             console.error(e);

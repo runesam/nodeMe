@@ -1,5 +1,5 @@
-const Http = require('axios');
-const yargs = require('yargs');
+import Http from 'axios';
+import yargs from 'yargs';
 
 const { argv } = yargs.options({
     address: {
