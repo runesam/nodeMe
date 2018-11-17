@@ -12,10 +12,9 @@
         </style>
     </head>
     <body>
+        {{>header}}
         <h3>{{pageTitle}}</h3>
-        <p>{{welcomeMessage}}</p>
-        <footer>
-            <p><small>Copyright {{currentYear}}</small></p>
-        </footer>
+        <p>{{getWelcomeMessage 'Sam' 'Lovers'}}</p>
+        {{>footer}}
     </body>
 </html>

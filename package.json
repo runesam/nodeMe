@@ -6,7 +6,7 @@
   "scripts": {
     "weather": "nodemon index --app weather",
     "notes": "nodemon index --app notes",
-    "server": "nodemon index --app server"
+    "server": "nodemon index --app server -e js,hbs"
   },
   "repository": "git@github.com:runesam/nodeMe.git",
   "author": "runesam <same7.hamada@gmail.com>",

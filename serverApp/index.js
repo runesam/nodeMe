@@ -2,6 +2,10 @@ import path from 'path';
 import express from 'express';
 import hbs from 'hbs';
 
+hbs.registerPartials(path.join(__dirname, 'views/partials'));
+hbs.registerHelper('getCurrentYear', () => new Date().getUTCFullYear());
+hbs.registerHelper('getWelcomeMessage', (by, to) => `welcome by ${by} to my first ${to}`);
+
 const app = express();
 const port = 3000;
 
@@ -16,8 +20,6 @@ app.set('view engine', hbs);
 app.get('/', (req, res) => {
     res.render('home.hbs', {
         pageTitle: 'NODE APP',
-        currentYear: new Date().getUTCFullYear(),
-        welcomeMessage: 'welcome to my first node app',
     });
 });
 
@@ -28,7 +30,6 @@ app.get('/error', (req, res) => {
 app.get('/about', (req, res) => {
     res.render('about.hbs', {
         pageTitle: 'About Page',
-        currentYear: new Date().getFullYear(),
     });
 });
 
