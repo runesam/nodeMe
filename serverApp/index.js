@@ -14,14 +14,22 @@ app.set('view engine', hbs);
 
 // REST
 app.get('/', (req, res) => {
-    res.send('<style>body{ background: red}</style><h1>hello express</h1>');
+    res.render('home.hbs', {
+        pageTitle: 'NODE APP',
+        currentYear: new Date().getUTCFullYear(),
+        welcomeMessage: 'welcome to my first node app',
+    });
 });
+
 app.get('/error', (req, res) => {
     res.status(404);
     res.send({ errorMessage: 'error not found' });
 });
 app.get('/about', (req, res) => {
-    res.render('about.hbs');
+    res.render('about.hbs', {
+        pageTitle: 'About Page',
+        currentYear: new Date().getFullYear(),
+    });
 });
 
 // INIT
