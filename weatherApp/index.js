@@ -1,5 +1,6 @@
-import Http from 'axios';
 import yargs from 'yargs';
+import geocode from './geocode';
+import forecast from './forecast';
 
 const { argv } = yargs.options({
     address: {
@@ -13,22 +14,9 @@ const { argv } = yargs.options({
 
 const { address } = argv;
 
-const rootURL = 'https://maps.googleapis.com/maps/api/geocode/json';
-
-Http.interceptors.response.use(config => config, error => console.error(
-    error.response.status,
-    error.response.statusText,
-));
-
-Http({
-    method: 'get',
-    url: rootURL,
-    params: {
-        key: 'AIzaSyBJQXDY16J-MvCy3xaaOarBzJJobbvvpOU',
-        address,
-    },
-}).then(res => console.log(
-    res.data.results[0].formatted_address,
-    res.data.results[0].geometry.location.lng,
-    res.data.results[0].geometry.location.lat,
-)).catch(reason => console.log(reason));
+geocode.geocodeAddress(address).then((result) => {
+    console.info(JSON.stringify(result, undefined, 4));
+    forecast
+        .forecastWeather(result.lat, result.lng)
+        .then(res => console.info(JSON.stringify(res, undefined, 4)));
+}).catch(error => console.error(error, 'invalid address been provided'));
