@@ -1,5 +1,4 @@
-function disagg(from, to) {
-    console.log(from, to);
+function disagg() {
     return {
         applianceUsage: [
             {

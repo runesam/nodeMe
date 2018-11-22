@@ -8,7 +8,7 @@ hbs.registerPartials(path.join(__dirname, 'views/partials'));
 hbs.registerHelper('getCurrentYear', () => new Date().getUTCFullYear());
 hbs.registerHelper('getWelcomeMessage', (by, to) => `welcome by ${by} to my first ${to}`);
 
-const app = express();
+export const app = express();
 const port = process.env.PORT || 3000;
 
 // USE
@@ -76,4 +76,4 @@ app.get('/meters/:meterId/:month', (req, res) => {
 });
 
 // INIT
-app.listen(port, () => console.log(`express init, listening to port ${port}`));
+export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));
