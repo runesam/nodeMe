@@ -3,7 +3,8 @@
     "rules": {
         "no-console": 0,
         "indent": ["error", 4],
-        "import/no-dynamic-require": 0
+        "import/no-dynamic-require": 0,
+        "no-confusing-arrow": 0
     },
     "globals": {
 
