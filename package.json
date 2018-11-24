@@ -10,9 +10,8 @@
 		"todo": "nodemon index --app todo -e js,hbs",
 		"start": "node index --app server",
 		"testServer": "mocha ./serverApp -name '*test.js' --require ignore-styles  --require babel-register --recursive",
-		"testTodo": "mocha ./todoApp -name '*test.js' --require ignore-styles  --require babel-register --recursive",
-		"test:server": "yarn server --exec \"yarn testServer\" ",
-		"test:todo": "yarn todo --exec \"yarn testTodo\" "
+		"testTodo": "mocha ./todoApp -name '*test.js' --require ignore-styles  --require babel-register --recursive --watch",
+		"test:server": "yarn server --exec \"yarn testServer\" "
 	},
 	"repository": "git@github.com:runesam/nodeMe.git",
 	"author": "runesam <same7.hamada@gmail.com>",

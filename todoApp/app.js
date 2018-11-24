@@ -14,6 +14,7 @@ const init = (db) => {
     toInsert.forEach(item => insertOne(db, item.to, item.that));
 };
 
+
 const create = (Of, With) => {
     const instance = new Of(With);
     return instance.save();

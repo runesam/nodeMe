@@ -21,7 +21,7 @@ mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true })
 // 	email: 'same7.hamada@gmail.com',
 // }).then(res => console.log(res)).catch(e => console.log(e));
 
-const app = express();
+export const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
@@ -34,4 +34,4 @@ app.post('/todo', (req, res) => {
 		.catch(e => res.status(400).send(e));
 });
 
-export default app.listen(port, () => console.log(`express init, listening to port ${port}`));
+export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));
