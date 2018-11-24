@@ -2,9 +2,9 @@ const dbErrorHandler = error => console.error('DB Error', error);
 
 const dbSuccessHandler = res => console.log(JSON.stringify(res.ops, undefined, 4));
 
-const dbCallback = (err, res) => (err ? dbErrorHandler(err) : dbSuccessHandler(res));
-
-const insertOne = (db, to, that) => db.collection(to).insertOne(that, dbCallback);
+const insertOne = (db, to, that) => db.collection(to).insertOne(that)
+    .then(dbSuccessHandler)
+    .catch(dbErrorHandler);
 
 const init = (db) => {
     const toInsert = [
