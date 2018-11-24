@@ -1,10 +1,15 @@
 require('babel-register')({
     presets: ['env'],
+	plugins: ['transform-object-rest-spread'],
 });
 
-const yargs = require('yargs');
+const yArgs = require('yargs');
 
-const { argv } = yargs.options({
+if (!yArgs.options) {
+	yArgs.options = () => {};
+}
+
+const { argv } = yArgs.options({
     application: {
         demand: true,
         alias: 'app',

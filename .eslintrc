@@ -1,12 +1,13 @@
 {
-    "extends": "airbnb",
-    "rules": {
-        "no-console": 0,
-        "indent": ["error", 4],
-        "import/no-dynamic-require": 0,
-        "no-confusing-arrow": 0
-    },
-    "globals": {
-
-    }
+  "extends": "airbnb",
+  "rules": {
+    "no-console": 0,
+    "indent": 0,
+    "no-tabs": 0,
+    "no-mixed-spaces-and-tabs": 0,
+    "import/no-dynamic-require": 0,
+    "no-confusing-arrow": 0
+  },
+  "globals": {
+  }
 }
