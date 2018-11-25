@@ -31,19 +31,24 @@ app.get('/todo', (req, res) => {
 
 app.get('/todo/:id', (req, res) => {
 	const { id } = req.params;
-	const errorMessage = 'todo not found';
-	Todo.findById(new ObjectId(id)).then((result) => {
-		if (result) {
-			return res.send({ result });
-		}
-		return res.status(404).send({ errorMessage });
-	}).catch(e => res.send(e));
+	let errorMessage = 'todo not found';
+	if (ObjectId.isValid(id)) {
+		return Todo.findById(new ObjectId(id)).then((result) => {
+			if (result) {
+				return res.send({ result });
+			}
+			return res.status(404).send({ errorMessage });
+		}).catch(e => res.send(e));
+	}
+	errorMessage = 'invalid ID';
+	return res.status(401).send({ errorMessage });
 });
 
 app.get('/user/:id', (req, res) => {
 	const { id } = req.params;
-	const errorMessage = 'user not found';
-	User.findById(new ObjectId(id))
+	let errorMessage = 'user not found';
+	if (ObjectId.isValid(id)) {
+		return User.findById(new ObjectId(id))
 		.then((result) => {
 			if (result) {
 				return res.send({ result });
@@ -51,6 +56,9 @@ app.get('/user/:id', (req, res) => {
 			return res.status(404).send({ errorMessage });
 		})
 		.catch(e => res.status(500).send(e));
+	}
+	errorMessage = 'invalid ID';
+	return res.status(401).send({ errorMessage });
 });
 
 export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));
