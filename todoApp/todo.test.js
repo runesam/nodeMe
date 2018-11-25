@@ -1,28 +1,25 @@
 import request from 'supertest';
 import {
+    beforeEach,
     describe,
     it,
-    beforeEach,
-    after,
 } from 'mocha';
 import { expect } from 'chai';
 
-import { app, server } from './index';
+import { app } from './index';
 import { User, Todo } from './models';
 
-request.agent(server);
+const todoDummy = [
+    { text: 'first todo' },
+    { text: 'second todo' },
+];
+
+beforeEach((done) => {
+    Todo.deleteMany({}).then(() => Todo.insertMany(todoDummy)).then(() => done());
+});
 
 describe('app', () => {
-    after((done) => {
-        server.close();
-        done();
-    });
-
     describe('post over /todo end point', () => {
-        beforeEach((done) => {
-            Todo.deleteMany({}).then(() => done());
-        });
-
         it('returns 200  with the right request body', (done) => {
             const text = 'love me';
             request(app)
@@ -34,12 +31,38 @@ describe('app', () => {
                     if (err) {
                         return done(err);
                     }
-                    return Todo.find().then((todoList) => {
+                    return Todo.find({ text }).then((todoList) => {
                         expect(todoList.length).to.equal(1);
                         expect(todoList[0].text).to.equal(text);
                         done();
                     }).catch(e => done(e));
                 });
+        });
+
+        it('return 400 with the right error message', (done) => {
+            request(app)
+                .post('/todo')
+                .expect(400)
+                .expect(res => expect(res.body.message).to.equal('Todo validation failed: text: Path `text` is required.'))
+                .end((err) => {
+                    if (err) {
+                        return done(err);
+                    }
+                    return Todo.find().then((todoList) => {
+                        expect(todoList.length).to.equal(2);
+                        done();
+                    }).catch(e => done(e));
+                });
+            });
+    });
+
+    describe('post over /todo end point', () => {
+        it('gets the right number of todo items from the collection', (done) => {
+            request(app)
+                .get('/todo')
+                .expect(200)
+                .expect(res => expect(res.body.length).to.equal(2))
+                .end(done);
         });
     });
 });

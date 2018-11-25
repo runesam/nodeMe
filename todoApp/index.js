@@ -8,13 +8,6 @@ import { User, Todo } from './models';
 mongoose.Promise = Promise;
 mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true }).then().catch();
 
-// create(Todo, { text: 'cook diner' }).then(res => console.log(res)).catch(e => console.log(e));
-// create(Todo, {
-// 	text: 'love myself',
-// 	completed: true,
-// 	completedAt: new Date('11-24-2018'),
-// }).then(res => console.log(res)).catch(e => console.log(e));
-//
 // create(User, {
 // 	firstName: 'Sam',
 // 	lastName: 'Ewdala',
@@ -32,6 +25,10 @@ app.post('/todo', (req, res) => {
 	create(Todo, { text })
 		.then(result => res.send(result))
 		.catch(e => res.status(400).send(e));
+});
+
+app.get('/todo', (req, res) => {
+	Todo.find().then(result => res.send(result)).catch(err => res.status(500).send(err));
 });
 
 export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));
