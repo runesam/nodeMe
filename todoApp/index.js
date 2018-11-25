@@ -7,13 +7,10 @@ import { create } from './app';
 import { User, Todo } from './models';
 
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp', { useNewUrlParser: true }).then().catch();
-
-// create(User, {
-// 	firstName: 'Sam',
-// 	lastName: 'Ewdala',
-// 	email: 'same7.hamada@gmail.com',
-// }).then(res => console.log(res)).catch(e => console.log(e));
+mongoose.connect(
+	process.env.MONGODB_URI || 'mongodb://localhost:27017/TodoApp',
+	{ useNewUrlParser: true },
+).then().catch();
 
 export const app = express();
 const port = process.env.PORT || 3000;
