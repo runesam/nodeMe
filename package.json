@@ -8,7 +8,7 @@
 		"notes": "nodemon index --app notes",
 		"server": "nodemon index --app server -e js,hbs",
 		"todo": "nodemon index --app todo -e js,hbs",
-		"start": "node index --app server",
+		"start": "node index --app todo",
 		"testServer": "mocha ./serverApp -name '*test.js' --require ignore-styles  --require babel-register --recursive",
 		"testTodo": "mocha ./todoApp -name '*test.js' --require ignore-styles  --require babel-register --recursive --watch",
 		"test:server": "yarn server --exec \"yarn testServer\"",
