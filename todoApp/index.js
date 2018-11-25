@@ -7,6 +7,7 @@ import { create } from './app';
 import { User, Todo } from './models';
 
 mongoose.Promise = Promise;
+mongoose.set('useFindAndModify', false);
 mongoose.connect(
 	process.env.MONGODB_URI || 'mongodb://localhost:27017/TodoApp',
 	{ useNewUrlParser: true },
@@ -50,6 +51,32 @@ app.delete('/todo/:id', (req, res) => {
 	let errorMessage = 'no todo found to delete';
 	if (ObjectId.isValid(id)) {
 		return Todo.findOneAndDelete(new ObjectId(id)).then((result) => {
+			if (result) {
+				return res.send({ result });
+			}
+			return res.status(404).send({ errorMessage });
+		}).catch(e => res.send(e));
+	}
+	errorMessage = 'invalid ID';
+	return res.status(401).send({ errorMessage });
+});
+
+app.patch('/todo/:id', (req, res) => {
+	const { id } = req.params;
+	let errorMessage = 'no todo found to update';
+	if (ObjectId.isValid(id)) {
+		const obj = (['text', 'completed']).reduce((acc, item) => {
+			if (req.body[item]) {
+				acc[item] = req.body[item];
+			}
+			return acc;
+		}, {});
+		const completedAt = obj.completed ? new Date() : null;
+		return Todo.findOneAndUpdate(
+			{ _id: new ObjectId(id) },
+			{ $set: { ...obj, completedAt } },
+			{ new: true },
+		).then((result) => {
 			if (result) {
 				return res.send({ result });
 			}

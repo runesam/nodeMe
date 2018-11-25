@@ -135,12 +135,17 @@ describe('app', () => {
                             _id: _id.toHexString(),
                         });
                     })
-                    .end(() => {
-                        Todo.find().then((result) => {
-                            expect(result.length).to.equal(1);
-                            done();
-                        }).catch(e => done(e));
-                    });
+                    .end(done);
+            });
+
+            it('delete a single todo from the collection', (done) => {
+                const { _id } = todoDummy[0];
+                request(app).delete(`/todo/${_id}`).end(() => {
+                    Todo.find().then((result) => {
+                        expect(result.length).to.equal(1);
+                        done();
+                    }).catch(e => done(e));
+                });
             });
 
             it('returns right error message when todo doesn\' exist', (done) => {
@@ -154,6 +159,36 @@ describe('app', () => {
                     expect(result.length).to.equal(2);
                     done();
                 }).catch(e => done(e));
+            });
+        });
+
+        describe('patch over /todo/:id end point', () => {
+            it('returns a single todo if the todo exists and updates it', (done) => {
+                const { _id } = todoDummy[0];
+                request(app)
+                    .patch(`/todo/${_id}`)
+                    .send({ completed: true })
+                    .expect(200)
+                    .expect((res) => {
+                        expect(res.body.result).to.contain({
+                            ...todoDummy[0],
+                            completed: true,
+                            _id: _id.toHexString(),
+                        });
+                    })
+                    .end(done);
+            });
+
+            it('updates a single todo from the collection', (done) => {
+                const { _id } = todoDummy[0];
+                request(app).patch(`/todo/${_id}`).send({ completed: true }).end(() => {
+                    Todo.find().then((result) => {
+                        expect(result.length).to.equal(2);
+                        expect(result[0].completed).to.be.true;
+                        expect(result[0].completedAt).to.not.equal(null);
+                        done();
+                    }).catch(e => done(e));
+                });
             });
         });
     });
