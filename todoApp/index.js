@@ -13,7 +13,19 @@ mongoose.connect(
 ).then().catch();
 
 export const app = express();
+
 const port = process.env.PORT || 3000;
+const authenticate = (req, res, next) => {
+	const token = req.header('x-auth');
+	const errorMessage = 'user not found';
+	User.findByToken(token).then((user) => {
+		if (user) {
+			req.user = user;
+			return next();
+		}
+		return res.status(404).send({ errorMessage });
+	}).catch(e => res.status(401).send(e));
+};
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -94,6 +106,10 @@ app.post('/user/', (req, res) => {
 		.then(() => user.generateAuthToken())
 		.then(token => res.header('x-auth', token).send(user))
 		.catch(e => res.status(400).send(e));
+});
+
+app.get('/user/me/', authenticate, (req, res) => {
+	res.send(req.user);
 });
 
 app.get('/user/:id', (req, res) => {

@@ -42,6 +42,16 @@ schema.methods.toJSON = function toJSON() {
 	return ({ email, _id });
 };
 
+schema.statics.findByToken = function findByToken(token) {
+	const User = this;
+	try {
+		const { _id } = jwt.verify(token, 'secret');
+		return User.findOne({ _id, 'tokens.token': token, 'tokens.access': 'auth' });
+	} catch (e) {
+		return Promise.reject(e);
+	}
+};
+
 schema.methods.generateAuthToken = function generateAuthToken() {
 	const { _id } = this;
 	const access = 'auth';
