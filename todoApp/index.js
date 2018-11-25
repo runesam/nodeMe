@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// todo
 app.post('/todo', (req, res) => {
 	const { text } = req.body;
 	create(Todo, { text })
@@ -44,6 +45,22 @@ app.get('/todo/:id', (req, res) => {
 	return res.status(401).send({ errorMessage });
 });
 
+app.delete('/todo/:id', (req, res) => {
+	const { id } = req.params;
+	let errorMessage = 'no todo found to delete';
+	if (ObjectId.isValid(id)) {
+		return Todo.findOneAndDelete(new ObjectId(id)).then((result) => {
+			if (result) {
+				return res.send({ result });
+			}
+			return res.status(404).send({ errorMessage });
+		}).catch(e => res.send(e));
+	}
+	errorMessage = 'invalid ID';
+	return res.status(401).send({ errorMessage });
+});
+
+// user
 app.get('/user/:id', (req, res) => {
 	const { id } = req.params;
 	let errorMessage = 'user not found';

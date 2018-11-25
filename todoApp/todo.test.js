@@ -122,6 +122,40 @@ describe('app', () => {
                 });
             });
         });
+
+        describe('delete over /todo/:id end point', () => {
+            it('returns a single todo object if the todo exists', (done) => {
+                const { _id } = todoDummy[0];
+                request(app)
+                    .delete(`/todo/${_id}`)
+                    .expect(200)
+                    .expect((res) => {
+                        expect(res.body.result).to.contain({
+                            ...todoDummy[0],
+                            _id: _id.toHexString(),
+                        });
+                    })
+                    .end(() => {
+                        Todo.find().then((result) => {
+                            expect(result.length).to.equal(1);
+                            done();
+                        }).catch(e => done(e));
+                    });
+            });
+
+            it('returns right error message when todo doesn\' exist', (done) => {
+                request(app)
+                    .delete('/todo/5bfa6d0baea6e56b7902ea8c')
+                    .expect(404)
+                    .expect((res) => {
+                        expect(res.errorMessage).to.equal('no todo found to delete');
+                    });
+                Todo.find().then((result) => {
+                    expect(result.length).to.equal(2);
+                    done();
+                }).catch(e => done(e));
+            });
+        });
     });
 
     describe('/user end point', () => {
