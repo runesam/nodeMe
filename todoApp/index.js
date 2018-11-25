@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import express from 'express';
 import bodyParser from 'body-parser';
+import { ObjectId } from 'mongodb';
 
 import { create } from './app';
 import { User, Todo } from './models';
@@ -28,7 +29,31 @@ app.post('/todo', (req, res) => {
 });
 
 app.get('/todo', (req, res) => {
-	Todo.find().then(result => res.send(result)).catch(err => res.status(500).send(err));
+	Todo.find().then(result => res.send({ result })).catch(err => res.status(500).send(err));
+});
+
+app.get('/todo/:id', (req, res) => {
+	const { id } = req.params;
+	const errorMessage = 'todo not found';
+	Todo.findById(new ObjectId(id)).then((result) => {
+		if (result) {
+			return res.send({ result });
+		}
+		return res.status(404).send({ errorMessage });
+	}).catch(e => res.send(e));
+});
+
+app.get('/user/:id', (req, res) => {
+	const { id } = req.params;
+	const errorMessage = 'user not found';
+	User.findById(new ObjectId(id))
+		.then((result) => {
+			if (result) {
+				return res.send({ result });
+			}
+			return res.status(404).send({ errorMessage });
+		})
+		.catch(e => res.status(500).send(e));
 });
 
 export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));

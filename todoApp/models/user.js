@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const what = 'Todo';
+const what = 'User';
 
 delete mongoose.connection.models[what];
 
