@@ -20,7 +20,13 @@ const create = (Of, With) => {
     return instance.save();
 };
 
+const getInstance = (Of, With) => {
+    const instance = new Of(With);
+    return instance;
+};
+
 module.exports = {
     init,
     create,
+    getInstance,
 };

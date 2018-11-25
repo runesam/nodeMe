@@ -14,7 +14,6 @@ import {
     app,
 } from './index';
 import {
-    User,
     Todo,
 } from './models';
 
@@ -27,13 +26,6 @@ const todoDummy = [{
         text: 'second todo',
     },
 ];
-
-const userDummy = {
-    _id: new ObjectID(),
-    firstName: 'Sam',
-    lastName: 'Ewdala',
-    email: 'same7.hamada@gmail.com',
-};
 
 describe('app', () => {
     describe('/todo endpoint', () => {
@@ -188,36 +180,6 @@ describe('app', () => {
                         expect(result[0].completedAt).to.not.equal(null);
                         done();
                     }).catch(e => done(e));
-                });
-            });
-        });
-    });
-
-    describe('/user end point', () => {
-        beforeEach((done) => {
-            User.deleteMany({}).then(() => User.insertMany([userDummy])).then(() => done());
-        });
-        describe('get over /user/:id end point', () => {
-            it('returns a single user object if the user exists', (done) => {
-                const { _id } = userDummy;
-                request(app)
-                    .get(`/user/${_id}`)
-                    .expect(200)
-                    .expect(res => expect(res.body.result).to.contain({
-                        ...userDummy,
-                        _id: _id.toHexString(),
-                    }))
-                    .end(done);
-            });
-
-            it('returns the right errorMessage if the user doesn\'t exists', (done) => {
-                User.deleteMany({}).then(() => {
-                    const { _id } = userDummy;
-                    request(app)
-                        .get(`/user/${_id}`)
-                        .expect(404)
-                        .expect(res => expect(res.body.errorMessage).to.equal('user not found'))
-                        .end(done);
                 });
             });
         });

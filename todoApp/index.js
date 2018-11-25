@@ -3,11 +3,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { ObjectId } from 'mongodb';
 
-import { create } from './app';
+import { create, getInstance } from './app';
 import { User, Todo } from './models';
 
 mongoose.Promise = Promise;
-mongoose.set('useFindAndModify', false);
 mongoose.connect(
 	process.env.MONGODB_URI || 'mongodb://localhost:27017/TodoApp',
 	{ useNewUrlParser: true },
@@ -88,6 +87,15 @@ app.patch('/todo/:id', (req, res) => {
 });
 
 // user
+app.post('/user/', (req, res) => {
+	const { email, password } = req.body;
+	const user = getInstance(User, { email, password });
+	user.save()
+		.then(() => user.generateAuthToken())
+		.then(token => res.header('x-auth', token).send(user))
+		.catch(e => res.status(400).send(e));
+});
+
 app.get('/user/:id', (req, res) => {
 	const { id } = req.params;
 	let errorMessage = 'user not found';
