@@ -1,21 +1,11 @@
 import request from 'supertest';
 import { ObjectID } from 'mongodb';
 
-import {
-    beforeEach,
-    describe,
-    it,
-} from 'mocha';
-import {
-    expect,
-} from 'chai';
+import { beforeEach, describe, it } from 'mocha';
+import { expect } from 'chai';
 
-import {
-    app,
-} from './index';
-import {
-    Todo,
-} from './models';
+import { app } from './index';
+import { Todo } from './models';
 
 const todoDummy = [{
         _id: new ObjectID(),
