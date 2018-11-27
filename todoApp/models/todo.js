@@ -22,6 +22,10 @@ const schema = new Schema({
 		type: Date,
 		default: null,
 	},
+	createdBy: {
+		type: Schema.Types.ObjectId,
+		required: true,
+	},
 });
 
 export default mongoose.model(what, schema);

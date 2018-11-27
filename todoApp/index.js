@@ -32,22 +32,30 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // todo
-app.post('/todo', (req, res) => {
+app.post('/todo', authenticate, (req, res) => {
 	const { text } = req.body;
-	create(Todo, { text })
+	const { _id } = req.user;
+	create(Todo, { createdBy: _id, text })
 		.then(result => res.send(result))
 		.catch(e => res.status(400).send(e));
 });
 
-app.get('/todo', (req, res) => {
-	Todo.find().then(result => res.send({ result })).catch(err => res.status(500).send(err));
+app.get('/todo', authenticate, (req, res) => {
+	const { _id } = req.user;
+	Todo.find({
+		createdBy: _id,
+	}).then(result => res.send({ result })).catch(err => res.status(500).send(err));
 });
 
-app.get('/todo/:id', (req, res) => {
+app.get('/todo/:id', authenticate, (req, res) => {
 	const { id } = req.params;
+	const { _id } = req.user;
 	let errorMessage = 'todo not found';
 	if (ObjectId.isValid(id)) {
-		return Todo.findById(new ObjectId(id)).then((result) => {
+		return Todo.findOne({
+			_id: new ObjectId(id),
+			createdBy: _id,
+		}).then((result) => {
 			if (result) {
 				return res.send({ result });
 			}
@@ -58,11 +66,15 @@ app.get('/todo/:id', (req, res) => {
 	return res.status(401).send({ errorMessage });
 });
 
-app.delete('/todo/:id', (req, res) => {
+app.delete('/todo/:id', authenticate, (req, res) => {
 	const { id } = req.params;
+	const { _id } = req.user;
 	let errorMessage = 'no todo found to delete';
 	if (ObjectId.isValid(id)) {
-		return Todo.findOneAndDelete(new ObjectId(id)).then((result) => {
+		return Todo.findOneAndDelete({
+			_id: new ObjectId(id),
+			createdBy: _id,
+		}).then((result) => {
 			if (result) {
 				return res.send({ result });
 			}
@@ -73,8 +85,9 @@ app.delete('/todo/:id', (req, res) => {
 	return res.status(401).send({ errorMessage });
 });
 
-app.patch('/todo/:id', (req, res) => {
+app.patch('/todo/:id', authenticate, (req, res) => {
 	const { id } = req.params;
+	const { _id } = req.user;
 	let errorMessage = 'no todo found to update';
 	if (ObjectId.isValid(id)) {
 		const obj = (['text', 'completed']).reduce((acc, item) => {
@@ -85,7 +98,10 @@ app.patch('/todo/:id', (req, res) => {
 		}, {});
 		const completedAt = obj.completed ? new Date() : null;
 		return Todo.findOneAndUpdate(
-			{ _id: new ObjectId(id) },
+			{
+				_id: new ObjectId(id),
+				createdBy: _id,
+			},
 			{ $set: { ...obj, completedAt } },
 			{ new: true },
 		).then((result) => {
