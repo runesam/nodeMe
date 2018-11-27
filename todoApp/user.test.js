@@ -166,10 +166,11 @@ describe('/user end point', () => {
                 })
                 .end(() => {
                     User.findOne({ email: userDummy.email }).then((user) => {
-                        const { tokens: [{ token }] } = user;
+                        const { tokens } = user;
+                        const { token } = tokens[tokens.length - 1];
                         expect(response['x-auth']).to.equal(token);
                         done();
-                    });
+                    }).catch(done);
                 });
         });
 
@@ -192,6 +193,33 @@ describe('/user end point', () => {
                 .expect(({ body: { errorMessage } }) => {
                     expect(errorMessage).to.equal('wrong email or password');
                 })
+                .end(done);
+        });
+    });
+
+    describe('post over /user/login/ endpoint', () => {
+        it('returns 200 on success call', (done) => {
+            User.findOne({ email: userDummy.email }).then((user) => {
+                const { tokens } = user;
+                const { token } = tokens[tokens.length - 1];
+                request(app)
+                    .delete('/user/me/token')
+                    .set('x-auth', token)
+                    .expect(200)
+                    .end(() => {
+                        User.findOne({ email: userDummy.email }).then((result) => {
+                            expect(result.tokens).to.have.lengthOf(0);
+                            done();
+                        });
+                    });
+            }).catch(done);
+        });
+
+        it('returns 401 on success call', (done) => {
+            request(app)
+                .delete('/user/me/token')
+                .set('x-auth', 'invalid token')
+                .expect(401)
                 .end(done);
         });
     });

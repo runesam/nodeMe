@@ -21,6 +21,7 @@ const authenticate = (req, res, next) => {
 	User.findByToken(token).then((user) => {
 		if (user) {
 			req.user = user;
+			req.token = token;
 			return next();
 		}
 		return res.status(404).send({ errorMessage });
@@ -142,10 +143,13 @@ app.get('/user/:id', (req, res) => {
 });
 
 app.delete('/user/me/token', authenticate, (req, res) => {
-	req.user.removeToken().then(() => {
+	User.removeToken(req.token).then(() => {
 		res.status(200).send();
 	}).catch(() => {
 		res.status(401).send();
 	});
 });
-export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));
+
+export const server = app.listen(
+	port, () => console.log(`express init, listening to port ${port}`),
+);
