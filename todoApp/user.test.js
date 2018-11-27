@@ -11,7 +11,8 @@ import { User } from './models';
 const id = new ObjectID();
 const userDummy = {
     _id: id,
-    password: 'testpassword',
+    real: 'testpassword',
+    password: '$2b$10$nosBYF9HlO9CVWOYisD1CevOAYeEm/PycoDBs6qdpDpMaC3ww5lSy',
     email: 'same7.hamada@gmail.com',
     tokens: {
         access: 'auth',
@@ -147,6 +148,51 @@ describe('/user end point', () => {
                         })
                         .end(done);
                 });
+        });
+    });
+
+    describe('post over /user/login/ endpoint', () => {
+        it('returns a single user with right credentials', (done) => {
+            let response;
+            request(app)
+                .post('/user/login/')
+                .send({ email: userDummy.email, password: userDummy.real })
+                .expect(200)
+                .expect(({ header, body: { _id, email } }) => {
+                    // eslint-disable-next-line no-underscore-dangle
+                    expect(_id).to.equal(userDummy._id.toHexString());
+                    expect(email).to.equal(userDummy.email);
+                    response = header;
+                })
+                .end(() => {
+                    User.findOne({ email: userDummy.email }).then((user) => {
+                        const { tokens: [{ token }] } = user;
+                        expect(response['x-auth']).to.equal(token);
+                        done();
+                    });
+                });
+        });
+
+        it('returns the right error message when user not found', (done) => {
+            request(app)
+                .post('/user/login/')
+                .send({ email: 'wrong@asa.com', password: 'wrongPass' })
+                .expect(404)
+                .expect(({ body: { errorMessage } }) => {
+                    expect(errorMessage).to.equal('wrong email or password');
+                })
+                .end(done);
+        });
+
+        it('returns the right error message when password is wrong', (done) => {
+            request(app)
+                .post('/user/login/')
+                .send({ email: userDummy.email, password: 'wrongPass' })
+                .expect(401)
+                .expect(({ body: { errorMessage } }) => {
+                    expect(errorMessage).to.equal('wrong email or password');
+                })
+                .end(done);
         });
     });
 });

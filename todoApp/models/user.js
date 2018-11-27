@@ -78,8 +78,8 @@ schema.statics.findByEmailAndPassword = function findByEmailAndPassword(email, a
 };
 
 schema.methods.toJSON = function toJSON() {
-	const { email, _id } = this.toObject();
-	return ({ email, _id });
+	const { email, _id, tokens } = this.toObject();
+	return ({ email, _id, tokens });
 };
 
 schema.methods.generateAuthToken = function generateAuthToken() {
