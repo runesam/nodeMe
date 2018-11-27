@@ -68,11 +68,11 @@ app.get('/meters/:meterId/:month', (req, res) => {
     const { month } = req.params;
     if (month === 'latestDay') {
         res.status(404);
-        res.send({ errorMessage: 'error not found' });
+        return res.send({ errorMessage: 'error not found' });
     }
     const { from, to } = req.query;
     const appliancesBreakdown = disagg(from, to);
-    res.send(appliancesBreakdown);
+    return res.send(appliancesBreakdown);
 });
 
 // INIT

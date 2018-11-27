@@ -102,14 +102,23 @@ app.patch('/todo/:id', (req, res) => {
 app.post('/user/', (req, res) => {
 	const { email, password } = req.body;
 	const user = getInstance(User, { email, password });
-	user.save()
-		.then(() => user.generateAuthToken())
+	user.generateAuthToken()
 		.then(token => res.header('x-auth', token).send(user))
 		.catch(e => res.status(400).send(e));
 });
 
 app.get('/user/me/', authenticate, (req, res) => {
 	res.send(req.user);
+});
+
+app.post('/user/login', (req, res) => {
+	const { email, password } = req.body;
+	User.findByEmailAndPassword(email, password).then((result) => {
+		if (result.errorMessage) {
+			throw result;
+		}
+		res.send(result);
+	}).catch(err => res.status(401).send(err));
 });
 
 app.get('/user/:id', (req, res) => {

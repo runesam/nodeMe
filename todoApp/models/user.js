@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import jwt from 'jsonwebtoken';
-import bycrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 const what = 'User';
 
@@ -40,11 +40,10 @@ const schema = new Schema({
 
 schema.pre('save', function beforeSave(next) {
 	if (this.password) {
-		bycrypt.genSalt(10, (err, salt) => {
-			bycrypt.hash(this.password, salt, (error, hash) => {
-				this.password = hash;
-				next();
-			});
+		console.log(this.email, this.password);
+		bcrypt.hash(this.password, 10, (err, hash) => {
+			this.password = hash;
+			next(err);
 		});
 	} else {
 		next();
@@ -59,6 +58,24 @@ schema.statics.findByToken = function findByToken(token) {
 	} catch (e) {
 		return Promise.reject(e);
 	}
+};
+
+schema.statics.findByEmailAndPassword = function findByEmailAndPassword(email, agentPassword) {
+	return this.findOne({ email }).then((user) => {
+		let message;
+		if (user) {
+			const { password } = user;
+			return bcrypt.compare(agentPassword, password).then((res) => {
+				if (res) {
+					return user;
+				}
+				message = { errorMessage: 'wrong email or password' };
+				throw message;
+			}).catch(error => (error));
+		}
+		message = { errorMessage: 'user not found' };
+		throw message;
+	}, error => error);
 };
 
 schema.methods.toJSON = function toJSON() {

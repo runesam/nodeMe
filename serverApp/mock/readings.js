@@ -14,7 +14,7 @@ function readings(month) {
         });
         usage += dayUsage;
     }
-    return { dailyReadings, usage };
+    return { dailyReadings: dailyReadings.reverse(), usage };
 }
 
 module.exports = {
