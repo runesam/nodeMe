@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 import hbs from 'hbs';
 import fs from 'fs';
-import { readings, disagg } from './mock';
+import { readings, disagg, live } from './mock';
 
 hbs.registerPartials(path.join(__dirname, 'views/partials'));
 hbs.registerHelper('getCurrentYear', () => new Date().getUTCFullYear());
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 });
 app.get('/error', (req, res) => {
     res.status(404);
-    res.send({ errorMessage: 'error not found' });
+    res.send({ errorMessage: 'error not founds' });
 });
 app.get('/about', (req, res) => {
     res.render('about.hbs', {
@@ -62,6 +62,14 @@ app.get('/meters/:meterId/breakdown', (req, res) => {
     const { from, to } = req.query;
     const appliancesBreakdown = disagg(from, to);
     res.send(appliancesBreakdown);
+});
+
+app.get('/meters/:meterId/latestDay', (req, res) => {
+    res.send(live());
+});
+
+app.get('/meters/:meterId/latest', (req, res) => {
+    res.send({ readings: [live().readings[0]] });
 });
 
 app.get('/meters/:meterId/:month', (req, res) => {
