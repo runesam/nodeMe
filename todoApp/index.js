@@ -141,4 +141,11 @@ app.get('/user/:id', (req, res) => {
 	return res.status(401).send({ errorMessage });
 });
 
+app.delete('/user/me/token', authenticate, (req, res) => {
+	req.user.removeToken().then(() => {
+		res.status(200).send();
+	}).catch(() => {
+		res.status(401).send();
+	});
+});
 export const server = app.listen(port, () => console.log(`express init, listening to port ${port}`));

@@ -59,6 +59,15 @@ schema.statics.findByToken = function findByToken(token) {
 	}
 };
 
+schema.statics.removeToken = function removeToken(token) {
+	const user = this;
+	return user.update({
+		$pull: {
+			tokens: { token },
+		},
+	});
+};
+
 schema.statics.findByEmailAndPassword = function findByEmailAndPassword(email, agentPassword) {
 	return this.findOne({ email }).then((user) => {
 		let message = { errorMessage: 'wrong email or password' };
