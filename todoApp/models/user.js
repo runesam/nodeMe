@@ -39,8 +39,7 @@ const schema = new Schema({
 });
 
 schema.pre('save', function beforeSave(next) {
-	if (this.password) {
-		console.log(this.email, this.password);
+	if (this.isModified('password') && this.password) {
 		bcrypt.hash(this.password, 10, (err, hash) => {
 			this.password = hash;
 			next(err);
@@ -62,18 +61,18 @@ schema.statics.findByToken = function findByToken(token) {
 
 schema.statics.findByEmailAndPassword = function findByEmailAndPassword(email, agentPassword) {
 	return this.findOne({ email }).then((user) => {
-		let message;
+		let message = { errorMessage: 'wrong email or password' };
 		if (user) {
 			const { password } = user;
 			return bcrypt.compare(agentPassword, password).then((res) => {
 				if (res) {
 					return user;
 				}
-				message = { errorMessage: 'wrong email or password' };
+				message = { ...message, status: 401 };
 				throw message;
 			}).catch(error => (error));
 		}
-		message = { errorMessage: 'user not found' };
+		message = { ...message, status: 404 };
 		throw message;
 	}, error => error);
 };

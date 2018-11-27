@@ -113,12 +113,15 @@ app.get('/user/me/', authenticate, (req, res) => {
 
 app.post('/user/login', (req, res) => {
 	const { email, password } = req.body;
-	User.findByEmailAndPassword(email, password).then((result) => {
-		if (result.errorMessage) {
-			throw result;
+	User.findByEmailAndPassword(email, password).then((user) => {
+		if (user.errorMessage) {
+			throw user;
+		} else {
+			user.generateAuthToken()
+			.then(token => res.header('x-auth', token).send(user))
+			.catch(e => res.status(400).send(e));
 		}
-		res.send(result);
-	}).catch(err => res.status(401).send(err));
+	}).catch(err => res.status(err.status).send({ errorMessage: err.errorMessage }));
 });
 
 app.get('/user/:id', (req, res) => {
