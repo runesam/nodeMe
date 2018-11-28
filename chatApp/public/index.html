@@ -15,10 +15,6 @@
         const socket = io();
         const onConnect = () => {
             console.log('connected to server');
-            socket.emit('createMessage', {
-                to: 'same7.hamada@gmail.com',
-                text: 'love me as I do',
-            });
         };
         const onDisconnect = () => {
             console.log('disconnected from server');
@@ -28,9 +24,19 @@
             console.log('client got new message', data);
         };
 
+        const onConnectWelcome = (data) => {
+            console.log('woow, u just joined the app', data);
+        };
+
+        const onConnectInfrom = (data) => {
+            console.log(`welcome ${data.id} he/she just joinded the app`, data);
+        };
+
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
         socket.on('newMessage', onNewMessage);
+        socket.on('connectWelcome', onConnectWelcome);
+        socket.on('connectInform', onConnectInfrom);
     </script>
 </body>
 

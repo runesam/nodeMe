@@ -13,16 +13,27 @@ const onDisconnect = (res) => {
 	console.log(`${res} just got disconnected`);
 };
 
-const onConnection = (res) => {
-	console.log('connected to client', res.id);
+const onConnection = (socket) => {
+	const { id } = socket;
+	socket.emit('connectWelcome', {
+		id,
+		from: 'admin',
+		text: 'welcome to the chat app',
+	});
+	socket.broadcast.emit('connectInform', {
+		id,
+		from: 'admin',
+		text: 'new user joined the room',
+	});
+	console.log('connected to client', id);
 };
 
 const onCreateMessage = (data, socket) => {
 	const { text } = data;
-	const createdAt = new Date();
+	const createdAt = new Date().getTime();
 	const from = socket.id;
 	console.log('server got a message', data);
-	socket.emit('newMessage', { text, createdAt, from });
+	socket.broadcast.emit('newMessage', { text, createdAt, from });
 };
 
 app.use(express.static(publicPath));
