@@ -3,6 +3,8 @@ import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
 
+import { generateMessage } from './message';
+
 const app = express();
 const publicPath = path.join(__dirname, '/public');
 const port = process.env.PORT || 3000;
@@ -15,25 +17,19 @@ const onDisconnect = (res) => {
 
 const onConnection = (socket) => {
 	const { id } = socket;
-	socket.emit('connectWelcome', {
-		id,
-		from: 'admin',
-		text: 'welcome to the chat app',
-	});
-	socket.broadcast.emit('connectInform', {
-		id,
-		from: 'admin',
-		text: 'new user joined the room',
-	});
+	socket.emit('newMessage', generateMessage('admin', 'welcome to the chat app'));
+	socket.broadcast.emit('newMessage', generateMessage(
+		'admin',
+		`welcome ${id} he/she just joined the room`,
+	));
 	console.log('connected to client', id);
 };
 
 const onCreateMessage = (data, socket) => {
 	const { text } = data;
-	const createdAt = new Date().getTime();
 	const from = socket.id;
+	socket.broadcast.emit('newMessage', generateMessage(from, text));
 	console.log('server got a message', data);
-	socket.broadcast.emit('newMessage', { text, createdAt, from });
 };
 
 app.use(express.static(publicPath));
