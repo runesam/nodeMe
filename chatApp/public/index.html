@@ -6,27 +6,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>chat with node</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
 </head>
 
 <body>
     <p>welcome to chat app</p>
+    <ol id="messages"></ol>
+    <form action="" id="message-form">
+        <div class="mdc-text-field">
+            <input type="text" name="text" id="my-text-field" class="mdc-text-field__input">
+            <label class="mdc-floating-label" for="my-text-field">type your message</label>
+            <div class="mdc-line-ripple"></div>
+        </div>
+        <button class="mdc-button">
+            Send
+        </button>
+    </form>
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
-        const onConnect = () => {
-            console.log('connected to server');
-        };
-        const onDisconnect = () => {
-            console.log('disconnected from server');
-        };
-
-        const onNewMessage = (data) => {
-            console.log(data.text, data);
-        };
-
-        socket.on('connect', onConnect);
-        socket.on('disconnect', onDisconnect);
-        socket.on('newMessage', onNewMessage);
+        var global = undefined;
+    </script>
+    <script src="/index.js"></script>
+    <script>
+        mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
+        document.querySelector('form').addEventListener('submit', window.onSubmit, false);
     </script>
 </body>
 

@@ -25,10 +25,11 @@ const onConnection = (socket) => {
 	console.log('connected to client', id);
 };
 
-const onCreateMessage = (data, socket) => {
+const onCreateMessage = (data, callback, socket) => {
 	const { text } = data;
 	const from = socket.id;
 	socket.broadcast.emit('newMessage', generateMessage(from, text));
+	callback('message sent');
 	console.log('server got a message', data);
 };
 
@@ -37,7 +38,7 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
 	onConnection(socket);
 	socket.on('disconnect', onDisconnect);
-	socket.on('createMessage', data => onCreateMessage(data, socket));
+	socket.on('createMessage', (data, callback) => onCreateMessage(data, callback, socket));
 });
 
 // app listening
