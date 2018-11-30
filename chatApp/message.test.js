@@ -8,7 +8,10 @@ describe('generate message function', () => {
         const from = 'same7.hamada@gmail.com';
         const text = 'just for testing purposes';
         const actual = generateMessage(from, text);
-        expect(actual).to.contain({ from, text: `<li>${from}: ${text}</li>` });
+        expect(actual).to.contain({
+            from,
+            text,
+        });
         expect(actual.createdAt).to.be.a('date');
     });
 });
@@ -19,15 +22,11 @@ describe('generate location message function', () => {
         const lon = 0;
         const from = 'same7.hamada@gmail.com';
         const text = `
-            <li>
-                ${from}
-                <a
-                    href='https://maps.google.com/?q=${lat},${lon}'
-                    target='_blank'
-                >
-                    location
-                </a>
-            </li>
+            <a
+                href='https://maps.google.com/?q=${lat},${lon}' target='_blank'
+            >
+                location
+            </a>
         `;
         const actual = generateLocationMessage(from, lat, lon);
         expect(actual).to.contain({ from, text });

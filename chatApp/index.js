@@ -29,7 +29,7 @@ const onCreateMessage = (data, callback, socket) => {
 	const { text } = data;
 	const from = socket.id;
 	socket.broadcast.emit('newMessage', generateMessage(from, text));
-	callback(`ME: ${text} (sent: ${new Date()})`);
+	callback({ text, createdAt: new Date() });
 	console.log('server got a message', data);
 };
 
@@ -37,7 +37,7 @@ const onCreateLocationMessage = (data, callback, socket) => {
 	const { latitude, longitude } = data;
 	const from = socket.id;
 	socket.broadcast.emit('newMessage', generateLocationMessage(from, latitude, longitude));
-	callback(`ME: ${latitude} ${longitude}`);
+	callback({ text: `latitude: ${latitude} longitude: ${longitude}`, createdAt: new Date() });
 	console.log('server got a message', data);
 };
 

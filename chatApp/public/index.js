@@ -3,11 +3,17 @@ const io = global ? global.io : window.io;
 if (typeof io === 'function') {
     const socket = io();
 
-    const callback = (message) => {
-        const li = window.document.createElement('li');
-        const node = window.document.createTextNode(message);
-        li.appendChild(node);
-        window.document.querySelector('ol').appendChild(li);
+    const callback = ({ text, createdAt }) => {
+        window.document.querySelector('.msg_history').insertAdjacentHTML('beforeend', `
+            <div class="outgoing_msg">
+                <div class="sent_msg">
+                    <p>${text}</p>
+                    <span class="time_date">
+                        ${window.moment(createdAt).format('LTS | MMMM d')}
+                    </span>
+                </div>
+            </div>
+        `);
     };
 
     const onConnect = () => {
@@ -18,9 +24,21 @@ if (typeof io === 'function') {
         console.log('disconnected from server');
     };
 
-    const onNewMessage = ({ text }) => {
-        console.log(text);
-        window.document.querySelector('ol').insertAdjacentHTML('beforeend', text);
+    const onNewMessage = ({ text, createdAt }) => {
+        window.document.querySelector('.msg_history').insertAdjacentHTML('beforeend', `
+            <div class="incoming_msg">
+                <div class="incoming_msg_img">
+                <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" />
+            </div>
+            <div class="received_msg">
+                <div class="received_withd_msg">
+                    <p>${text}</p>
+                    <span class="time_date">
+                        ${window.moment(createdAt).format('LTS | MMMM d')}
+                    </span>
+                </div>
+            </div>
+        `);
     };
 
     const createMessage = (data) => {
@@ -49,7 +67,6 @@ if (typeof io === 'function') {
         e.target.disabled = true;
         if (window.navigator.geolocation) {
             return window.navigator.geolocation.getCurrentPosition((position) => {
-                console.log(position);
                 createLocationMessage(position);
                 e.target.disabled = false;
             });
