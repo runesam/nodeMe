@@ -3,7 +3,7 @@ import express from 'express';
 import http from 'http';
 import socketIO from 'socket.io';
 
-import { generateMessage } from './message';
+import { generateMessage, generateLocationMessage } from './message';
 
 const app = express();
 const publicPath = path.join(__dirname, '/public');
@@ -29,7 +29,15 @@ const onCreateMessage = (data, callback, socket) => {
 	const { text } = data;
 	const from = socket.id;
 	socket.broadcast.emit('newMessage', generateMessage(from, text));
-	callback('message sent');
+	callback(`ME: ${text} (sent: ${new Date()})`);
+	console.log('server got a message', data);
+};
+
+const onCreateLocationMessage = (data, callback, socket) => {
+	const { latitude, longitude } = data;
+	const from = socket.id;
+	socket.broadcast.emit('newMessage', generateLocationMessage(from, latitude, longitude));
+	callback(`ME: ${latitude} ${longitude}`);
 	console.log('server got a message', data);
 };
 
@@ -39,6 +47,10 @@ io.on('connection', (socket) => {
 	onConnection(socket);
 	socket.on('disconnect', onDisconnect);
 	socket.on('createMessage', (data, callback) => onCreateMessage(data, callback, socket));
+	socket.on(
+		'createLocationMessage',
+		(data, callback) => onCreateLocationMessage(data, callback, socket),
+	);
 });
 
 // app listening

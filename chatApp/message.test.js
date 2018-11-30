@@ -1,14 +1,36 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
-import { generateMessage } from './message';
+import { generateMessage, generateLocationMessage } from './message';
 
 describe('generate message function', () => {
-    it('generated the message with the right properties', () => {
+    it('generates the message with the right properties', () => {
         const from = 'same7.hamada@gmail.com';
         const text = 'just for testing purposes';
         const actual = generateMessage(from, text);
+        expect(actual).to.contain({ from, text: `<li>${from}: ${text}</li>` });
+        expect(actual.createdAt).to.be.a('date');
+    });
+});
+
+describe('generate location message function', () => {
+    it('generates the message with the right properties', () => {
+        const lat = 0;
+        const lon = 0;
+        const from = 'same7.hamada@gmail.com';
+        const text = `
+            <li>
+                ${from}
+                <a
+                    href='https://maps.google.com/?q=${lat},${lon}'
+                    target='_blank'
+                >
+                    location
+                </a>
+            </li>
+        `;
+        const actual = generateLocationMessage(from, lat, lon);
         expect(actual).to.contain({ from, text });
-        expect(actual.createdAt).to.be.a('number');
+        expect(actual.createdAt).to.be.a('date');
     });
 });

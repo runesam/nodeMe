@@ -10,7 +10,6 @@
 </head>
 
 <body>
-    <p>welcome to chat app</p>
     <ol id="messages"></ol>
     <form action="" id="message-form">
         <div class="mdc-text-field">
@@ -18,20 +17,15 @@
             <label class="mdc-floating-label" for="my-text-field">type your message</label>
             <div class="mdc-line-ripple"></div>
         </div>
-        <button class="mdc-button">
-            Send
-        </button>
+        <button class="mdc-button">Send</button>
     </form>
+    <button id="sendLocation" class="mdc-button">Send Location</button>
     <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var global = undefined;
     </script>
     <script src="/index.js"></script>
-    <script>
-        mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
-        document.querySelector('form').addEventListener('submit', window.onSubmit, false);
-    </script>
 </body>
 
 </html>
