@@ -4,24 +4,45 @@ import http from 'http';
 import socketIO from 'socket.io';
 
 import { generateMessage, generateLocationMessage } from './message';
+import Users from './users';
 
+const users = new Users();
 const app = express();
 const publicPath = path.join(__dirname, '/public');
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = socketIO(server);
 
-const onDisconnect = (res) => {
-	console.log(`${res} just got disconnected`);
+const onDisconnect = ({ id }) => {
+	const user = users.deleteUser({ id });
+	if (user.id) {
+		io.to(user.room).emit('updateUsersList', users.getUsers());
+		io.to(user.room).emit('newMessage', generateMessage(
+			'admin',
+			`user ${user.username} just leaft the room`,
+		));
+	}
+	console.log(`${id} just got disconnected`);
+};
+
+const onJoined = ({ username, room }, callback, socket) => {
+	if (username && room) {
+		socket.join(room);
+		users.deleteUser({ id: socket.id, username, room });
+		users.setUser({ id: socket.id, username, room });
+
+		io.to(room).emit('updateUsersList', users.getUsers());
+		socket.emit('newMessage', generateMessage('admin', 'welcome to the chat app'));
+		return socket.broadcast.to(room).emit('newMessage', generateMessage(
+			'admin',
+			`welcome ${username} he/she just joined the ${room} room`,
+		));
+	}
+	return callback({ error: true, text: 'username and room must be provided' });
 };
 
 const onConnection = (socket) => {
 	const { id } = socket;
-	socket.emit('newMessage', generateMessage('admin', 'welcome to the chat app'));
-	socket.broadcast.emit('newMessage', generateMessage(
-		'admin',
-		`welcome ${id} he/she just joined the room`,
-	));
 	console.log('connected to client', id);
 };
 
@@ -45,12 +66,13 @@ app.use(express.static(publicPath));
 
 io.on('connection', (socket) => {
 	onConnection(socket);
-	socket.on('disconnect', onDisconnect);
+	socket.on('disconnect', () => onDisconnect(socket));
 	socket.on('createMessage', (data, callback) => onCreateMessage(data, callback, socket));
 	socket.on(
 		'createLocationMessage',
 		(data, callback) => onCreateLocationMessage(data, callback, socket),
 	);
+	socket.on('joined', (data, callback) => onJoined(data, callback, socket));
 });
 
 // app listening

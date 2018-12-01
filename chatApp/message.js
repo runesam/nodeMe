@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 const format = 'ddd / MMM HH:mm:ss';
 
 const generateMessage = (from, text) => {
