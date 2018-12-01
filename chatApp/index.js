@@ -16,7 +16,7 @@ const io = socketIO(server);
 const onDisconnect = ({ id }) => {
 	const user = users.deleteUser({ id });
 	if (user.id) {
-		io.to(user.room).emit('updateUsersList', users.getUsers());
+		io.to(user.room).emit('updateUsersList', users.getRoomUsers(user.room));
 		io.to(user.room).emit('newMessage', generateMessage(
 			'admin',
 			`user ${user.username} just leaft the room`,
@@ -31,7 +31,7 @@ const onJoined = ({ username, room }, callback, socket) => {
 		users.deleteUser({ id: socket.id, username, room });
 		users.setUser({ id: socket.id, username, room });
 
-		io.to(room).emit('updateUsersList', users.getUsers());
+		io.to(room).emit('updateUsersList', users.getRoomUsers(room));
 		socket.emit('newMessage', generateMessage('admin', 'welcome to the chat app'));
 		return socket.broadcast.to(room).emit('newMessage', generateMessage(
 			'admin',
@@ -48,16 +48,18 @@ const onConnection = (socket) => {
 
 const onCreateMessage = (data, callback, socket) => {
 	const { text } = data;
-	const from = socket.id;
-	socket.broadcast.emit('newMessage', generateMessage(from, text));
+	const { room, username } = users.getUser({ id: socket.id });
+	const from = username;
+	socket.broadcast.to(room).emit('newMessage', generateMessage(from, text));
 	callback({ text, createdAt: new Date() });
 	console.log('server got a message', data);
 };
 
 const onCreateLocationMessage = (data, callback, socket) => {
 	const { latitude, longitude } = data;
-	const from = socket.id;
-	socket.broadcast.emit('newMessage', generateLocationMessage(from, latitude, longitude));
+	const { room, username } = users.getUser({ id: socket.id });
+	const from = username;
+	socket.broadcast.to(room).emit('newMessage', generateLocationMessage(from, latitude, longitude));
 	callback({ text: `latitude: ${latitude} longitude: ${longitude}`, createdAt: new Date() });
 	console.log('server got a message', data);
 };
