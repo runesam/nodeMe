@@ -8,11 +8,14 @@
 		"notes": "nodemon index --app notes",
 		"server": "nodemon index --app server -e js,hbs",
 		"todo": "nodemon index --app todo -e js,hbs",
-		"start": "node index --app todo",
+		"chat": "nodemon index --app chat -e js,hbs",
+		"start": "node index --app chat",
 		"testServer": "mocha ./serverApp -name '*test.js' --require ignore-styles  --require babel-register --recursive",
 		"testTodo": "mocha ./todoApp -name '*test.js' --require ignore-styles  --require babel-register --recursive --watch",
+		"testChat": "mocha ./chatApp -name '*test.js' --require ignore-styles  --require babel-register --recursive --watch",
 		"test:server": "yarn server --exec \"yarn testServer\"",
-		"test:todo": "yarn todo --exec \"yarn testTodo\""
+		"test:todo": "yarn todo --exec \"yarn testTodo\"",
+		"test:chat": "yarn chat --exec \"yarn testChat\""
 	},
 	"repository": "git@github.com:runesam/nodeMe.git",
 	"author": "runesam <same7.hamada@gmail.com>",
@@ -33,6 +36,7 @@
 		"moment": "^2.22.2",
 		"mongodb": "^3.1.10",
 		"mongoose": "^5.3.13",
+		"socket.io": "^2.1.1",
 		"yargs": "^12.0.2"
 	},
 	"devDependencies": {

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>chat with node</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <h3 class=" text-center">Messaging</h3>
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="inbox_people">
+                    <div class="inbox_chat"></div>
+                </div>
+                <div class="mesgs">
+                    <div class="msg_history"></div>
+                    <div class="type_msg">
+                        <form action="" id="message-form">
+                            <div class="mdc-text-field input_msg_write">
+                                <input type="text" name="text" id="my-text-field" class="mdc-text-field__input write_msg" autofocus autocomplete="off">
+                                <label class="mdc-floating-label" for="my-text-field">
+                                    type your message
+                                </label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <button class="mdc-button msg_send_btn" type="submit">
+                                <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                        <button id="sendLocation" class="mdc-button loc_send_btn">
+                            <i class="fa fa-location-arrow" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var global = undefined;
+    </script>
+    <script src="/index.js"></script>
+</body>
+
+</html>
